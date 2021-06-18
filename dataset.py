@@ -1,11 +1,11 @@
 import torch
 import torchvision as tv
 from pathlib import Path
-from tqdm import tqdm
+from tqdm.autonotebook import tqdm
 import cv2
 import os
 
-
+from pipeline import Preprocess
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, root, res, device="cuda", aligned_subdir="aligned"):
