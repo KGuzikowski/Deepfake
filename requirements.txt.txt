@@ -1,0 +1,30 @@
+# 3ddfa
+torch
+torchvision
+matplotlib
+numpy
+opencv-python # cv2
+imageio
+imageio-ffmpeg
+pyyaml # yaml
+tqdm
+argparse
+cython
+scikit-image # skimage
+scipy
+onnxruntime
+
+#vedadet
+albumentations
+addict
+terminaltables
+yapf
+imagecorruptions
+mmpycocotools
+
+
+
+
+adabelief-pytorch==0.2.0
+pytorch_msssim
+onnxruntime
