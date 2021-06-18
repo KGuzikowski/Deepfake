@@ -128,15 +128,16 @@ def train(src_dl, dst_dl, model, optimizer=None, max_iters=200000,
 
 
 def start_from_scratch(res, enc_ch, int_ch, dec_ch, dec_mask_ch, src_dir, dst_dir, name, max_iters=500000, batch_size=4, 
-        backup_every=1000, device="cuda", preview_dir="/content/drive/MyDrive/previews", backup_dir="/content/drive/MyDrive"):
+        backup_every=1000, device="cuda", preview_dir="/content/drive/MyDrive/previews", backup_dir="/content/drive/MyDrive",
+        aligned_subdir="aligned"):
 
     device = torch.device(device)
     model = Model(res, enc_ch, int_ch, dec_ch, dec_mask_ch)
     model.to(device)
     model.train()
 
-    ds_src = Dataset(src_dir, res)
-    ds_dst = Dataset(dst_dir, res)
+    ds_src = Dataset(src_dir, res, aligned_subdir=aligned_subdir)
+    ds_dst = Dataset(dst_dir, res, aligned_subdir=aligned_subdir)
 
     src_sampler = ResumableRandomSampler(ds_src)
     src_dl = torch.utils.data.DataLoader(ds_src, batch_size=batch_size, 
@@ -150,7 +151,8 @@ def start_from_scratch(res, enc_ch, int_ch, dec_ch, dec_mask_ch, src_dir, dst_di
             device=device, name=name, preview_dir=preview_dir, backup_dir=backup_dir)
 
 def start_from_pretrained(path_to_pretrained, src_dir, dst_dir, name, max_iters=500000, batch_size=4, backup_every=1000, 
-        device="cuda", preview_dir="/content/drive/MyDrive/previews", backup_dir="/content/drive/MyDrive"):
+        device="cuda", preview_dir="/content/drive/MyDrive/previews", backup_dir="/content/drive/MyDrive",
+        aligned_subdir="aligned"):
 
     device = torch.device(device)
     state = torch.load(path_to_pretrained)
@@ -161,8 +163,8 @@ def start_from_pretrained(path_to_pretrained, src_dir, dst_dir, name, max_iters=
     model.train()
 
     res = model.res
-    ds_src = Dataset(src_dir, model.res)
-    ds_dst = Dataset(dst_dir, model.res)
+    ds_src = Dataset(src_dir, model.res, aligned_subdir=aligned_subdir)
+    ds_dst = Dataset(dst_dir, model.res, aligned_subdir=aligned_subdir)
 
     src_sampler = ResumableRandomSampler(ds_src)
     src_dl = torch.utils.data.DataLoader(ds_src, batch_size=batch_size, 
@@ -180,7 +182,8 @@ def start_from_pretrained(path_to_pretrained, src_dir, dst_dir, name, max_iters=
 
 
 def load_training(path, path_to_dst, path_to_src, name, max_iters=500000, device="cuda", batch_size=4,
-                preview_dir="/content/drive/MyDrive/previews", backup_dir="/content/drive/MyDrive"):
+                preview_dir="/content/drive/MyDrive/previews", backup_dir="/content/drive/MyDrive",
+                aligned_subdir="aligned"):
     device = torch.device("cuda")
     state = torch.load(path, map_location=device)
 
@@ -191,12 +194,12 @@ def load_training(path, path_to_dst, path_to_src, name, max_iters=500000, device
     optimizer = AdaBelief(model.parameters(), lr=1e-5)
     optimizer.load_state_dict(state["optimizer"])
 
-    dst = Dataset(path_to_dst, model.res)
+    dst = Dataset(path_to_dst, model.res, aligned_subdir=aligned_subdir)
     dst_sampler = ResumableRandomSampler(dst)
     dst_sampler.set_state(state["dest_sampler"])
     dst_dl = torch.utils.data.DataLoader(dst, batch_size=batch_size, sampler=dst_sampler, drop_last=True)
 
-    src = Dataset(path_to_src, model.res)
+    src = Dataset(path_to_src, model.res, aligned_subdir=aligned_subdir)
     src_sampler = ResumableRandomSampler(src)
     src_sampler.set_state(state["dest_sampler"])
     src_dl = torch.utils.data.DataLoader(src, batch_size=batch_size, sampler=src_sampler, drop_last=True)
