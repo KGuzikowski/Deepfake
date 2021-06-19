@@ -1,7 +1,9 @@
 import torch
 import torchvision as tv
+import torchvision.transforms.functional as tvtf
 from pathlib import Path
 from tqdm.autonotebook import tqdm
+from random import random
 import cv2
 import os
 
@@ -41,7 +43,9 @@ class Dataset(torch.utils.data.Dataset):
         im = im.to(self.device)
         mask = mask.to(self.device)
 
-        return im, mask
+        if random() < 0.5:
+            return im, mask
+        return tvtf.hflip(im), tvtf.hflip(mask)
 
 class ResumableRandomSampler(torch.utils.data.Sampler):
     def __init__(self, data_source, start_at=0, seed=69):
