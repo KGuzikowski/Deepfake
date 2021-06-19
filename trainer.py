@@ -181,7 +181,7 @@ def start_from_pretrained(path_to_pretrained, src_dir, dst_dir, name, max_iters=
 
 
 
-def load_training(path, path_to_dst, path_to_src, name, max_iters=500000, device="cuda", batch_size=4,
+def load_training(path, path_to_src, path_to_dst, name, max_iters=500000, device="cuda", batch_size=4,
                 preview_dir="/content/drive/MyDrive/previews", backup_dir="/content/drive/MyDrive",
                 aligned_subdir="aligned"):
     device = torch.device("cuda")
