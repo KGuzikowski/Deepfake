@@ -201,7 +201,7 @@ def load_training(path, path_to_src, path_to_dst, name, max_iters=500000, device
 
     src = Dataset(path_to_src, model.res, aligned_subdir=aligned_subdir)
     src_sampler = ResumableRandomSampler(src)
-    src_sampler.set_state(state["dest_sampler"])
+    src_sampler.set_state(state["src_sampler"])
     src_dl = torch.utils.data.DataLoader(src, batch_size=batch_size, sampler=src_sampler, drop_last=True)
 
     curr_iter = state["curr_iter"]
