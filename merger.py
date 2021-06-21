@@ -107,7 +107,7 @@ def merge_video(model, in_video_path, out_video_path):
 
     video = None
     for _ in tqdm(range(n_frames)):
-        out_im = merge_image(m, (image/255.0).astype(np.float32))[..., [2, 1, 0]]
+        out_im = merge_image(model, (image/255.0).astype(np.float32))[..., [2, 1, 0]]
 
         if video is None:
             height, width, channels = out_im.shape
