@@ -107,6 +107,10 @@ def merge_video(model, in_video_path, out_video_path):
 
     video = None
     for _ in tqdm(range(n_frames)):
+        success, image = vidcap.read()
+        if not success:
+            break
+        
         out_im = merge_image(model, (image/255.0).astype(np.float32))[..., [2, 1, 0]]
 
         if video is None:
@@ -114,10 +118,6 @@ def merge_video(model, in_video_path, out_video_path):
             video = cv2.VideoWriter(out_video_path, 0, 30, (width, height))
 
         video.write((out_im*255).astype(np.uint8))
-
-        success, image = vidcap.read()
-        if not success:
-            break # return
         
         image = image[..., [2, 1, 0]]
 
