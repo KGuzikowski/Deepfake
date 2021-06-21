@@ -101,9 +101,11 @@ def merge_image(model, im):
 
     return out_img
 
-def merge_video(model, in_video_path, out_video_path):
+def merge_video(model, in_video_path, out_video_path, rotate=None):
     vidcap = cv2.VideoCapture(in_video_path)
     n_frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 
     video = None
     for _ in tqdm(range(n_frames)):
@@ -111,15 +113,18 @@ def merge_video(model, in_video_path, out_video_path):
         if not success:
             break
         
-        out_im = merge_image(model, (image/255.0).astype(np.float32))[..., [2, 1, 0]]
+        if rotate:
+            image = cv2.rotate((image[..., [2, 1, 0]]/255.0).astype(np.float32), rotate)
+        else:
+            image = (image[..., [2, 1, 0]]/255.0).astype(np.float32)
+        
+        out_im = merge_image(model, image)[..., [2, 1, 0]]
 
         if video is None:
             height, width, channels = out_im.shape
-            video = cv2.VideoWriter(out_video_path, 0, 30, (width, height))
+            video = cv2.VideoWriter(out_video_path, fourcc, 30, (width, height))
 
         video.write((out_im*255).astype(np.uint8))
-        
-        image = image[..., [2, 1, 0]]
 
     cv2.destroyAllWindows()
     video.release()
